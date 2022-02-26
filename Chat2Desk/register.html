@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reg/Log C2D</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+        
+         ::-webkit-scrollbar {
+            width: 4px;
+            height: 2px;
+        }
+        /* ползунок скроллбара */
+        
+         ::-webkit-scrollbar-thumb {
+            background-color: #55dcaa;
+            border-radius: 9em;
+        }
+        
+         :root {
+            /*===== Colores =====*/
+            --first-color: #55dcaa;
+            --input-color: #c5c7cc;
+            --border-color: #c5c7cc;
+            /*===== Fuente y tipografia =====*/
+            --body-font: 'Nunito';
+            --normal-font-size: .95rem;
+            --small-font-size: .85rem;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        li {
+            list-style: none;
+        }
+        
+        .wrapper {
+            height: 100%;
+        }
+        
+        .conteiner {
+            height: 100%;
+        }
+        
+        .chatRegister {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.616);
+            z-index: 25;
+            /* overflow: hidden; */
+        }
+        
+        .close {
+            position: absolute;
+            color: #fff;
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+            width: 30px;
+            height: 30px;
+            border: 1px solid #fff;
+            border-radius: 100%;
+            padding: 6px;
+            cursor: pointer;
+            transition: .4s all ease;
+        }
+        
+        .close__btn {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .close__btn::after,
+        .close__btn::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #fff;
+            top: 8px;
+            left: 0;
+            transition: .4s all ease;
+        }
+        
+        .close:hover {
+            border-color: #55dcaa;
+        }
+        
+        .close:hover .close__btn::after {
+            background-color: #55dcaa;
+            transform: rotate(0deg);
+        }
+        
+        .close:hover .close__btn::before {
+            background-color: #55dcaa;
+            transform: rotate(180deg);
+        }
+        
+        .close__btn::before {
+            transform: rotate(135deg);
+        }
+        
+        .close__btn::after {
+            transform: rotate(45deg);
+        }
+        
+        .chatRegister__body {
+            position: fixed;
+            width: 40%;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            padding: 20px 50px;
+            background-color: #fff;
+            position: relative;
+        }
+        
+        .chatRegister__body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.527) url(../img/Spinner.gif) center /20% no-repeat;
+            z-index: 25;
+            transition: .2s all ease-in-out;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        ._sending::after {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .img-block {
+            width: 200px;
+            margin: 0 auto;
+            padding: 10px 0px;
+        }
+        
+        .tab {
+            width: 100%;
+            color: #000;
+            margin: 0 auto;
+        }
+        
+        .col {
+            margin: 0 auto;
+            display: block;
+            align-items: center;
+        }
+        /* СТИЛИЗАЦИЯ КНОПКИ */
+        
+        .tab-btn.active {
+            background-color: #55dcaa;
+            color: #fff;
+            /* transition: all .3s ease-out; */
+        }
+        
+        .tab-btn {
+            position: relative;
+            border: 2px solid #55dcaa;
+            border-radius: 500px;
+            padding: 10px 40px;
+            overflow: hidden;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all .2s ease-out;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .tab-btn:hover {
+            border: 2px solid #55dcaa;
+            color: #fff;
+            transform: scale(0.9);
+        }
+        
+        .tab-btn .round {
+            border-radius: 50%;
+            background-color: #55dcaa;
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            z-index: -1;
+            animation: scale-down 0.2s forwards;
+        }
+        
+        .tab-btn.animate .round {
+            animation: scale-up 0.5s forwards;
+        }
+        
+        @keyframes scale-up {
+            to {
+                transform: scale(600);
+            }
+        }
+        
+        @keyframes scale-down {
+            from {
+                transform: scale(600);
+            }
+            to {
+                ransform: scale(0);
+            }
+        }
+        /* СТИЛИЗАЦИЯ ФОРМЫ */
+        
+        .form {
+            padding: 0px 20px;
+        }
+        
+        .errorMesssage {
+            text-align: center;
+            color: red;
+            display: none;
+        }
+        
+        .form__body {
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .form__body:first-child {
+            display: block;
+        }
+        
+        .reset-password-form {
+            padding: 40px 0px;
+            display: none;
+        }
+        
+        .reset-password-form p {
+            text-align: center;
+        }
+        
+        .reset_pass_result {
+            display: none;
+        }
+        
+        .response_email {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .btn:active,
+        .btn:focus,
+        .btn.active {
+            box-shadow: none !important;
+        }
+        /* СТИЛИЗАЦИЯ ПОЛЯ */
+        
+        .form__item {
+            position: relative;
+            height: 40px;
+            margin-bottom: 1.9rem;
+        }
+        
+        .form__item span {
+            position: absolute;
+            top: 12px;
+            right: 20px;
+            cursor: pointer;
+            z-index: 2;
+            font-size: 18px;
+        }
+        
+        .form__item span:hover {
+            color: #55dcaa;
+        }
+        
+        .form__input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: var(--normal-font-size);
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            color: #000;
+            border-radius: .9rem;
+            outline: none;
+            padding: 1rem;
+            background: none;
+            z-index: 1;
+            font-weight: 400;
+        }
+        
+        .form__label {
+            position: absolute;
+            left: 1rem;
+            top: .6rem;
+            padding: 0 .25rem;
+            background-color: transparent;
+            color: #000;
+            font-size: var(--normal-font-size);
+            transition: .3s;
+            background-color: #fff;
+            z-index: 1;
+            font-weight: 500;
+        }
+        
+        .form__input:focus+.form__label {
+            top: -.6rem;
+            left: .8rem;
+            color: var(--first-color);
+            font-size: var(--small-font-size);
+            font-weight: 400;
+            z-index: 10;
+        }
+        
+        .form__input:not(:placeholder-shown).form__input:not(:focus)+.form__label {
+            top: -.6rem;
+            left: .8rem;
+            font-size: var(--small-font-size);
+            font-weight: 500;
+            z-index: 10;
+            color: #55dcaa;
+        }
+        
+        .form__input:not(:placeholder-shown).form__input:not(:focus) {
+            border: 1px solid #55dcaa;
+        }
+        
+        .form__input:focus {
+            border: 1.5px solid var(--first-color);
+        }
+        
+        input:-webkit-autofill {
+            -webkit-text-fill-color: #000!important;
+            -webkit-box-shadow: 0 0 0 30px #fff inset !important;
+        }
+        
+        input[type=password] {
+            padding-right: 50px;
+        }
+        /* СТИЛИЗАЦИЯ ЧЕКБОКСА */
+        
+        .check {
+            display: flex;
+            justify-content: flex-start;
+            margin: 0px 5px;
+            font-size: 14px;
+            width: 100%;
+            height: 20px;
+            margin-top: -5px;
+        }
+        
+        .check label {
+            width: 100%;
+        }
+        
+        input[type=checkbox]+label {
+            display: block;
+            cursor: pointer;
+            padding: 0.2em;
+        }
+        
+        input[type=checkbox] {
+            display: none;
+        }
+        
+        input[type=checkbox]+label::before {
+            content: "\2714";
+            border: 0.1em solid #000;
+            border-radius: 0.2em;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            padding-left: 0.2em;
+            padding-bottom: 1em;
+            margin-right: 2px;
+            color: transparent;
+            transition: .2s;
+        }
+        
+        input[type=checkbox]+label:active:before {
+            transform: scale(0);
+        }
+        
+        input[type=checkbox]:checked+label:before {
+            background-color: #55dcaa;
+            border-color: #55dcaa;
+            color: #fff;
+        }
+        
+        input[type=checkbox]:disabled+label:before {
+            transform: scale(1);
+            border-color: #aaa;
+        }
+        
+        input[type=checkbox]:checked:disabled+label::before {
+            transform: scale(1);
+            background-color: #bfb;
+            border-color: #bfb;
+        }
+        
+        .forgot-password {
+            color: #283CFA !important;
+            font-weight: 500;
+        }
+        
+        .form__submit {
+            position: relative;
+            margin: 20px auto;
+            overflow: hidden;
+            width: 100%;
+            font-variant: all-petite-caps;
+            text-align: center;
+            display: block;
+            background-color: transparent;
+            padding: 10px 20px;
+            font-weight: bold;
+            border: 2px solid var(--first-color);
+            box-shadow: 0 0 0 0 var(--first-color);
+            transition: 0.3s ease-in-out;
+            z-index: 2;
+            border-radius: 500px;
+            font-size: 18px;
+        }
+        
+        .form__submit:hover {
+            color: #fff;
+            text-shadow: 1px 5px 5px var(--first-color);
+        }
+        
+        .form__submit:hover.form__submit:before {
+            width: 200%;
+            height: 200%;
+            transition: 0.3s ease-in-out;
+        }
+        
+        .form__submit:before {
+            content: " ";
+            position: absolute;
+            z-index: -1;
+            width: 0%;
+            height: 0%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background-color: var(--first-color);
+            transition: 0.3s ease-in-out;
+        }
+        
+        .buttons {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .buttons button {
+            margin: 0px 5px;
+        }
+        
+        .error {
+            display: flex;
+            justify-content: flex-start;
+            color: red;
+            position: relative;
+            bottom: -40px;
+            margin-left: 10px;
+            align-items: center;
+        }
+        
+        .error p {
+            padding-top: 1px;
+        }
+        
+        .error i,
+        .error p {
+            margin: 0px 2px;
+        }
+        
+        .success {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .success__content {
+            width: 30%;
+            padding: 20px 0px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            /* display: none; */
+        }
+        
+        .success__content .img-block {
+            margin: 0 auto;
+            padding: 0px;
+        }
+        
+        .success__content .success__img {
+            margin-bottom: 20px;
+            width: 80px;
+        }
+        
+        .success__text {
+            text-align: center;
+            padding: 0px 20px;
+        }
+        
+        @media screen and (max-width: 992px) {
+            .chatRegister__body {
+                width: 60%;
+            }
+            .chatRegister {
+                overflow: scroll;
+            }
+        }
+        
+        @media screen and (max-width: 824px) {
+            .tab-btn {
+                margin: 10px 0px;
+            }
+            .check {
+                height: auto;
+            }
+        }
+        
+        @media screen and (max-width: 530px) {
+            .chatRegister__body {
+                padding: 50px 10px;
+                width: 100%;
+            }
+            .close {
+                z-index: 20;
+                top: 30px;
+                background-color: #55dcaa;
+                position: fixed;
+            }
+            .fomr__item {
+                height: 35px;
+            }
+            .form__label {
+                font-size: 12px;
+            }
+            .form__item span {
+                top: 10px;
+            }
+            .error i,
+            .error p {
+                font-size: 12px;
+            }
+            input[type=checkbox]+label::before {
+                height: 15px;
+                width: 15px;
+                padding-left: 0px;
+                position: relative;
+                top: 2px;
+            }
+        }
+        
+        @media screen and (max-width: 360px) {
+            /*.form__label{*/
+            /*    top*/
+            /*}*/
+        }
+        
+        #rec388354436,
+        #rec388356716 {
+            display: none;
+        }
+    </style>
+    <div class="wrapper">
+        <div class="conteiner" style="display: block;">
+            <div class="chatRegister" id="chatRegister">
+                <div class="close">
+                    <div class="close__btn"></div>
+                </div>
+                <div class="chatRegister__body">
+                    <div class="form container">
+                        <div class="img-block">
+                            <img src="https://static.tildacdn.com/tild3037-6663-4133-b031-646435383339/logo_text_2.svg" alt="" class="img-fluid">
+                        </div>
+                        <div class="row tab">
+                            <div class="col">
+                                <div class="btn tab-btn active" id="login" data-tab="login-form">Войти
+                                    <span class="round"></span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="btn tab-btn" id="register" data-tab="register-form">Регистрация
+                                    <span class="round"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form container">
+                        <form action="" id="login-form" class="form__body login-form active">
+                            <p class="errorMesssage"></p>
+                            <div class="form__item">
+                                <input type="text" name="email_login" id="email_login" class="form__input _email _req" placeholder=" " autocomplete="on">
+                                <label for="email_login" class="form__label">Email</label>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__Emailreq "></p>
+                                </div>
+                            </div>
+                            <div class="form__item">
+                                <input type="password" name="password_login" id="password_login" class="form__input _req" placeholder=" ">
+                                <label for="password_login" class="form__label">Пароль</label>
+                                <span class="fa fa-eye toggle-password" toggle="#password_login" aria-hidden="true"></span>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__req"></p>
+                                </div>
+                            </div>
+                            <div id="g-recaptcha-response"></div>
+                            <button type="submit" class="btn form__submit" id="login-submit">Войти</button>
+                            <div class="col-lg-12">
+                                <div class="text-center">
+                                    <a class="forgot-password" href="#" id="forgot-password">Забыли пароль?</a>
+                                </div>
+                            </div>
+                        </form>
+                        <form action="" id="register-form" class="form__body register-form">
+                            <p class="errorMesssage"></p>
+                            <div class="form__item">
+                                <input type="text" name="company_name" id="company_name" class="form__input _req" placeholder=" ">
+                                <label for="company_name" class="form__label">Название организации</label>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__req "></p>
+                                </div>
+                            </div>
+                            <div class="form__item ">
+                                <input type="text" name="email" id="email" class="form__input _email _req" placeholder=" " autocomplete="on">
+                                <label for="email" class="form__label">Email</label>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__Emailreq "></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form__item">
+                                        <input type="text" name="first_name" id="first_name" class="form__input _req" placeholder=" ">
+                                        <label for="first_name" class="form__label">ФИО</label>
+                                        <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                            <p class="__req "></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form__item ">
+                                        <input type="text" name="phone" id="phone" class="form__input _req" placeholder=" ">
+                                        <label for="phone" class="form__label">Телефон</label>
+                                        <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                            <p class="__req "></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form__item ">
+                                <input type="password" name="password" id="reg_password" class="form__input _req" placeholder=" ">
+                                <label for="reg_password" class="form__label">Пароль</label>
+                                <span class="fa fa-eye toggle-password" toggle="#reg_password" aria-hidden="true"></span>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__req "></p>
+                                </div>
+                            </div>
+                            <div class="form__item ">
+                                <input type="password" name="password" id="confirm_password" class="form__input _req" placeholder=" ">
+                                <label for="confirm_password" class="form__label">Подтвердите пароль</label>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__req "></p>
+                                </div>
+                            </div>
+                            <div class="form__item check">
+                                <input type="checkbox" name="data" id="data" class="_req">
+                                <label for="data">Я даю согласие на обработку персональных данных</label>
+
+                            </div>
+                            <button type="submit" class="btn form__submit" id="register-submit">Зарегистрироваться</button>
+                        </form>
+                        <form action="" class="reset-password-form" id="reset-password-form">
+                            <p class="errorMesssage"></p>
+                            <p>
+                                Укажите ваш e-mail, который был использован при регистрации. На него будет выслано письмо со ссылкой на изменение пароля
+                            </p>
+
+                            <div class="form__item ">
+                                <input type="text " name="forgot_pass" id="forgot_pass" class="form__input _email _req" placeholder=" " autocomplete="on">
+                                <label for="forgot_pass " class="form__label ">Email</label>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__resetPass"></p>
+                                </div>
+                            </div>
+                            <div class="buttons">
+                                <button type="button" id="cancel" class="btn form__submit">Отмена</button>
+                                <button type="submit" id="send_email" class="btn form__submit">Отпарвить</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="container master-login" style="display: none;">
+                        <form action="" id="master-login-form" class="form__body master-login-form">
+                            <p class="errorMesssage"></p>
+                            <div class="form__item">
+                                <input type="text" name="email" id="email" class="form__input _email _req" placeholder=" " autocomplete="on">
+                                <label for="email" class="form__label">Email</label>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__Emailreq "></p>
+                                </div>
+                            </div>
+                            <div class="form__item">
+                                <input type="password" name="password" id="password" class="form__input _req" placeholder=" ">
+                                <label for="password" class="form__label">Пароль</label>
+                                <span class="fa fa-eye toggle-password" toggle="#password" aria-hidden="true"></span>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__req"></p>
+                                </div>
+                            </div>
+                            <div class="form__item">
+                                <input type="text" name="personal-email" id="personal-email" class="form__input _email _req" placeholder=" " autocomplete="on">
+                                <label for="personal-email" class="form__label">Персональный email</label>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__Emailreq "></p>
+                                </div>
+                            </div>
+                            <div class="form__item">
+                                <input type="password" name="personal-password" id="personal-password" class="form__input _req" placeholder=" ">
+                                <label for="personal-password" class="form__label">Персональный пароль</label>
+                                <span class="fa fa-eye toggle-password" toggle="#personal-password" aria-hidden="true"></span>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__req"></p>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn form__submit" id="master-login">Войти</button>
+                        </form>
+                    </div>
+                    <div class="container res" style="display: none;">
+                        <form id="change-password-form" action="#" method="post" role="form" class="form__body">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h6 class="text-center" style="margin: 20px 0px; font-size: 20px;">Введите новый пароль</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form__item" id="change-password-password-group">
+                                <input type="password" name="change-password-password" id="change-password-password" class="form__input _req" placeholder=" ">
+                                <label for="change-password-password" class="form__label">Пароль</label>
+                                <span class="fa fa-eye toggle-password" toggle="#change-password-password" aria-hidden="true"></span>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__req"></p>
+                                </div>
+                            </div>
+                            <div class="form__item" id="change-password-repeatPassword-group">
+                                <input type="password" name="change-password-repeatPassword" id="change-password-repeatPassword" class="form__input _req" placeholder=" ">
+                                <label for="change-password-repeatPassword" class="form__label">Повторите пароль</label>
+                                <span class="fa fa-eye toggle-password" toggle="#change-password-repeatPassword" aria-hidden="true"></span>
+                                <div class="error"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                    <p class="__req"></p>
+                                </div>
+                            </div>
+                            <div id="change-password-secret-key-group" class="form-group">
+                                <input type="hidden" id="change-password-secret-key" value="">
+                            </div>
+                            <button type="submit" class="btn form__submit" id="change-submit">Изменить Пароль</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <div class="success" id="success">
+                <div class="success__content">
+                    <div class="img-block">
+                        <img src="https://static.tildacdn.com/tild3037-6663-4133-b031-646435383339/logo_text_2.svg" alt="" class="img-fluid">
+                    </div>
+                    <div class="img-block success__img">
+                        <img src="https://thumb.tildacdn.com/tild3464-6165-4431-a263-333466643736/-/format/webp/checkMark.png" alt="" class="img-fluid">
+                    </div>
+                    <div class="success__text">
+                        <div class="reset_pass_result" id="reset_pass_result">
+                            <h5 class="response_result">Проверьте свою почту</h5>
+                            <p class="response_email" id="response_email"></p>
+                            <p> На указанный e-mail отправлено письмо со ссылкой на изменение пароля. Если письма нет, проверьте папку `Спам`. Если и там нет, обратитесь к нам, мы вручную подтвердим ваш аккаунт.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <button class="btn-success" id="btn-demo">Демо</button> -->
+    </div>
+    <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.maskedinput.js"></script>
+    <script src="js/animate.js"></script>
+    <script src="js/register.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+    <script>
+        function sendform(a, m, o, c, r, m, ) {
+            a[o + c] = a[o + c] || {
+                setMeta: function(p) {
+                    this.params = (this.params || []).concat([p])
+                }
+            }, a[o + r] = a[o + r] || function(f) {
+                a[o + r].f = (a[o + r].f || []).concat([f])
+            }, a[o + r]({
+                id: "880072",
+                hash: "9bd514e906b9d41f87b1a618abed9e18",
+                locale: "ru"
+            }), a[o + m] = a[o + m] || function(f, k) {
+                a[o + m].f = (a[o + m].f || []).concat([
+                    [f, k]
+                ])
+            }
+        };
+        sendform(window, 0, "amo_forms_", "params", "load", "loaded");
+    </script>
+    <script id="amoforms_script_880072" async="async" charset="utf-8" src="https://forms.amocrm.ru/forms/assets/js/amoforms.js?1644930030"></script>
+</body>
+
+</html>

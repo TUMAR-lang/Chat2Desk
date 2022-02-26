@@ -1,0 +1,647 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+<script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<style>
+    body {
+        padding-top: 90px;
+    }
+    
+    .panel-login {
+        border-color: #ccc;
+        -webkit-box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.2);
+        -moz-box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.2);
+        box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.2);
+    }
+    
+    .reset {
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .panel-login>.panel-heading {
+        color: #00415d;
+        background-color: #fff;
+        border-color: #fff;
+        text-align: center;
+    }
+    
+    .panel-login>.panel-heading a {
+        text-decoration: none;
+        color: #666;
+        font-weight: bold;
+        font-size: 15px;
+        -webkit-transition: all 0.1s linear;
+        -moz-transition: all 0.1s linear;
+        transition: all 0.1s linear;
+    }
+    
+    .panel-login>.panel-heading a.active {
+        color: #029f5b;
+        font-size: 18px;
+    }
+    
+    .panel-login>.panel-heading hr {
+        margin-top: 10px;
+        margin-bottom: 0px;
+        clear: both;
+        border: 0;
+        height: 1px;
+        background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+        background-image: -moz-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+        background-image: -ms-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+        background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+    }
+    
+    .panel-login input[type="text"],
+    .panel-login input[type="email"],
+    .panel-login input[type="password"] {
+        height: 45px;
+        /* border: 1px solid #ddd; */
+        font-size: 16px;
+        -webkit-transition: all 0.1s linear;
+        -moz-transition: all 0.1s linear;
+        transition: all 0.1s linear;
+    }
+    
+    .panel-login .field-error {
+        margin-top: 5px;
+        margin-left: 5px;
+        color: #a94442;
+        display: block;
+    }
+    
+    .panel-login input:hover,
+    .panel-login input:focus {
+        outline: none;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+        border-color: #ccc;
+    }
+    
+    .btn-login {
+        background-color: #59B2E0;
+        outline: none;
+        color: #fff;
+        font-size: 14px;
+        height: auto;
+        font-weight: normal;
+        padding: 14px 0;
+        text-transform: uppercase;
+        border-color: #59B2E6;
+    }
+    
+    .btn-login:hover,
+    .btn-login:focus {
+        color: #fff;
+        background-color: #53A3CD;
+        border-color: #53A3CD;
+    }
+    
+    .forgot-password {
+        text-decoration: underline;
+        color: #888;
+    }
+    
+    .forgot-password:hover,
+    .forgot-password:focus {
+        text-decoration: underline;
+        color: #666;
+    }
+    
+    .btn-register {
+        background-color: #1CB94E;
+        outline: none;
+        color: #fff;
+        font-size: 14px;
+        height: auto;
+        font-weight: normal;
+        padding: 14px 0;
+        text-transform: uppercase;
+        border-color: #1CB94A;
+    }
+    
+    .btn-register:hover,
+    .btn-register:focus {
+        color: #fff;
+        background-color: #1CA347;
+        border-color: #1CA347;
+    }
+    
+    #internal-error {
+        color: red;
+        position: absolute;
+        top: 0;
+        margin-top: 0;
+        display: none;
+        left: 0;
+        background: #f9f9f9;
+        font-size: 20px;
+        text-align: center;
+        width: 100%;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+</style>
+<div class="container">
+    <h1 id="internal-error">Internal server error</h1>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-login" style="display: block;">
+                <div class="panel-heading" style="display: block;">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <a href="#" class="active" id="login-form-link">Login</a>
+                        </div>
+                        <div class="col-xs-4">
+                            <a href="#" id="register-form-link">Register</a>
+                        </div>
+                        <div class="col-xs-4">
+                            <a href="#" id="master-login-form-link">Master login</a>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form id="login-form" action="#" method="post" role="form" style="display: block;">
+                                <div id="login-email-group" class="form-group">
+                                    <input type="text" name="email" id="login-email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+                                    <span id="login-email-errors" class="field-errors-container"></span>
+                                </div>
+                                <div id="login-password-group" class="form-group">
+                                    <input type="password" name="password" id="login-password" tabindex="2" class="form-control" placeholder="Password">
+                                    <span id="login-password-errors" class="field-errors-container"></span>
+                                </div>
+                                <div id="g-recaptcha"></div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-6 col-sm-offset-3">
+                                            <input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="text-center">
+                                                <a href="#" tabindex="5" class="forgot-password">Forgot Password?</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <form id="register-form" action="#" method="post" role="form" style="display: none;">
+                                <div id="register-company_name-group" class="form-group">
+                                    <input id="register-company_name" type="text" tabindex="1" class="form-control" placeholder="Company Name">
+                                    <span id="register-company_name-errors" class="field-errors-container"></span>
+                                </div>
+                                <div id="register-email-group" class="form-group">
+                                    <input id="register-email" type="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+                                    <span id="register-email-errors" class="field-errors-container"></span>
+                                </div>
+                                <div id="register-password-group" class="form-group">
+                                    <input id="register-password" type="password" tabindex="2" class="form-control" placeholder="Password">
+                                    <span id="register-password-errors" class="field-errors-container"></span>
+                                </div>
+                                <div id="register-repeatPassword-group" class="form-group">
+                                    <input id="register-repeatPassword" type="password" tabindex="2" class="form-control" placeholder="Confirm Password">
+                                    <span id="register-repeatPassword-errors" class="field-errors-container"></span>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-6 col-sm-offset-3">
+                                            <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register Now">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <form id="master-login-form" action="#" method="post" role="form" style="display: none;">
+                                <div id="captcha-error"></div>
+                                <div id="login-email-group" class="form-group">
+                                    <input type="text" name="email" id="master-login-email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+                                    <span id="master-login-email-errors" class="field-errors-container"></span>
+                                </div>
+                                <div id="login-password-group" class="form-group">
+                                    <input type="password" name="password" id="master-login-password" tabindex="2" class="form-control" placeholder="Password">
+                                    <span id="master-login-password-errors" class="field-errors-container"></span>
+                                </div>
+                                <div id="personal-login-email-group" class="form-group">
+                                    <input type="text" name="personal-email" id="master-login-personal-email" tabindex="1" class="form-control" placeholder="Personal Email Address" value="">
+                                    <span id="master-login-personal_email-errors" class="field-errors-container"></span>
+                                </div>
+                                <div id="personal-login-password-group" class="form-group">
+                                    <input type="password" name="personal-password" id="master-login-personal-password" tabindex="2" class="form-control" placeholder="Personal Password">
+                                    <span id="master-login-personal_password-errors" class="field-errors-container"></span>
+                                </div>
+                                <div id="g-master-recaptcha"></div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-6 col-sm-offset-3">
+                                            <input type="submit" name="master-login-submit" id="master-login-submit" tabindex="4" class="form-control btn btn-login" value="Log In">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <form id="reset-password-form" action="#" method="post" role="form" style="display: none;">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="text-center">Enter your email to reset password</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="reset-password-email-group" class="form-group">
+                                    <input type="text" id="reset-password-email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+                                    <span id="reset-password-email-errors" class="field-errors-container"></span>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-6 col-sm-offset-3">
+                                            <input type="submit" name="reset-submit" id="reset-submit" tabindex="4" class="form-control btn btn-login" value="Reset password">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <form id="change-password-form" action="#" method="post" role="form" style="display: none;">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="text-center">Enter new password</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="change-password-password-group" class="form-group">
+                                    <input type="password" id="change-password-password" tabindex="2" class="form-control" placeholder="Password">
+                                    <span id="change-password-password-errors" class="field-errors-container"></span>
+                                </div>
+                                <div id="change-password-repeatPassword-group" class="form-group">
+                                    <input type="password" id="change-password-repeatPassword" tabindex="2" class="form-control" placeholder="Confirm Password">
+                                    <span id="change-password-repeatPassword-errors" class="field-errors-container"></span>
+                                </div>
+                                <div id="change-password-errors"></div>
+                                <div id="change-password-secret-key-group" class="form-group">
+                                    <input type="hidden" id="change-password-secret-key" value="">
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-6 col-sm-offset-3">
+                                            <input type="submit" name="change-submit" id="change-submit" tabindex="4" class="form-control btn btn-register" value="Change Password">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-login" id="panel-reset" style="display: none;">
+                <div class="row">
+                    <div class="reset">
+                        Password reset
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<button class="btn" id="click">Кликни на меня</button>
+<script>
+    function handleNonApiError(response) {
+        switch (response.status) {
+            case 500:
+                return ('#internal-error').show();
+        }
+    }
+
+    function nodesToArray(nodeList) {
+        return Array.prototype.slice.call(nodeList)
+    }
+
+    function getFieldValue(formId, id) {
+        return $('#' + formId + '-' + id).val()
+    }
+
+    function clearForm(formName) {
+        var formGroups = $('#' + formName + '-form > .form-group')
+        var fields = nodesToArray(formGroups)
+
+        return fields.forEach(field => {
+            $(field).removeClass('has-error')
+            $(field).children('.field-errors-container').empty()
+        })
+    }
+
+    function handleFormErrors(formName, errors) {
+        if (errors['session']) {
+            alert('You have exceeded the maximum number of online operators. Contact your account administrator to log in')
+        }
+
+        function renderFieldErrors(fieldName, fieldErrors) {
+            var fieldId = fieldName.includes('.') ? fieldName.replace('.', '_') : fieldName
+            var errorClass = 'has-error';
+            var container = $('#' + formName + '-' + fieldId + '-group');
+            var errorsContainer = $('#' + formName + '-' + fieldId + '-errors');
+
+            container.removeClass(errorClass);
+            errorsContainer.empty();
+
+            if (fieldErrors) {
+                container.addClass(errorClass);
+                fieldErrors.forEach(error => {
+                    errorsContainer.append(
+                        '<span class="field-error">' + error + '</span>'
+                    )
+                })
+            }
+        }
+
+        Object.keys(errors).forEach(key => {
+            var error = errors[key];
+
+            if (error) {
+                renderFieldErrors(key, error)
+            }
+        });
+    }
+
+    $(window).on('load', function() {
+        var grecaptchaCommonLoginWidget;
+        var grecaptchaMasterLoginWidget;
+
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        var apiUrl = 'https://web.chat2desk.com';
+        var secretKey = getParameterByName('hash');
+        if (secretKey) {
+            $(".panel-heading").fadeOut(100);
+            $("#register-form").fadeOut(100);
+            $("#login-form").fadeOut(100);
+            $("#master-login-form").fadeOut(100);
+            $("#change-password-form").fadeIn(100);
+            $("#change-password-form #change-password-secret-key").val(secretKey)
+        }
+        $('#register-form').submit(function(e) {
+            var formID = 'register';
+
+            e.preventDefault();
+            $.ajax({
+                method: 'POST',
+                url: apiUrl + '/api/user/sign_up',
+                contentType: "application/json; charset=UTF-8",
+                dataType: 'json',
+                data: JSON.stringify({
+                    email: getFieldValue(formID, 'email'),
+                    company_name: getFieldValue(formID, 'company_name'),
+                    password_confirmation: getFieldValue(formID, 'repeatPassword'),
+                    password: getFieldValue(formID, 'password')
+                }),
+                error: function(err) {
+                    console.error('Internal', err)
+                    return $('#internal-error').show();
+                },
+                success: function(response) {
+                    console.log('response', response)
+                    if (response.status === 'success') {
+                        location.href = apiUrl + '?auth_key=' + response.auth_key
+                    } else {
+                        console.error('Api error', response.errors)
+                        clearForm(formID)
+                        $('#internal-error').hide();
+                        handleFormErrors(formID, response.errors)
+                    }
+                }
+            })
+        });
+        $('#login-form').submit(function(e) {
+            var formID = 'login';
+            e.preventDefault();
+            $.ajax({
+                method: 'POST',
+                url: apiUrl + '/api/user/sign_in',
+                contentType: "application/json; charset=UTF-8",
+                dataType: 'json',
+                data: JSON.stringify({
+                    email: getFieldValue(formID, 'email'),
+                    password: getFieldValue(formID, 'password'),
+                    grecaptchaResponse: document.getElementById('g-recaptcha').hasChildNodes() ? grecaptcha.getResponse(grecaptchaCommonLoginWidget) : null
+                }),
+                error: function(err) {
+                    console.error('Internal', err)
+                    return $('#internal-error').show();
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        location.href = apiUrl + '?auth_key=' + response.auth_key
+                    } else {
+                        console.error('Api error', response.errors)
+                        clearForm(formID)
+                        try {
+                            response.errors = JSON.parse(response.errors.brute_force[0])
+                        } catch (e) {}
+                        if (document.getElementById('g-recaptcha').hasChildNodes()) grecaptcha.reset(grecaptchaCommonLoginWidget)
+                        var render_captcha = response.login_attempts_info !== null && (
+                            response.login_attempts_info.failed_attempts_number >= response.login_attempts_info.max_attempts_number
+                        ) && response.errors.reason === 'captcha'
+                        try {
+                            if (render_captcha) {
+                                grecaptchaCommonLoginWidget = grecaptcha.render('g-recaptcha', {
+                                    'sitekey': '6LdRklYcAAAAAC1dL3cBLr-I2AB8VfkacnWkZjIA'
+                                });
+                            }
+                        } catch (e) {}
+                        $('#internal-error').hide();
+                        if (response.errors.reason !== undefined && response.errors.message !== null) {
+                            handleFormErrors(formID, {
+                                password: [response.errors.message]
+                            })
+                        } else {
+                            handleFormErrors(formID, response.errors)
+                        }
+                    }
+                }
+            })
+        })
+        $('#master-login-form').submit(function(e) {
+            var formID = 'master-login';
+            e.preventDefault();
+            $.ajax({
+                method: 'POST',
+                url: apiUrl + '/api/user/master_sign_in',
+                contentType: "application/json; charset=UTF-8",
+                dataType: 'json',
+                data: JSON.stringify({
+                    email: getFieldValue(formID, 'email'),
+                    password: getFieldValue(formID, 'password'),
+                    personal_email: getFieldValue(formID, 'personal-email'),
+                    personal_password: getFieldValue(formID, 'personal-password'),
+                    grecaptchaResponse: document.getElementById('g-master-recaptcha').hasChildNodes() ? grecaptcha.getResponse(grecaptchaMasterLoginWidget) : null
+                }),
+                error: function(err) {
+                    console.error('Internal', err)
+                    return $('#internal-error').show();
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        location.href = apiUrl + '?auth_key=' + response.auth_key
+                    } else {
+                        console.error('Api error', response.errors)
+                        clearForm(formID)
+                        try {
+                            response.errors = JSON.parse(response.errors.brute_force[0])
+                        } catch (e) {}
+                        if (document.getElementById('g-master-recaptcha').hasChildNodes()) grecaptcha.reset(grecaptchaMasterLoginWidget)
+                        var render_captcha = response.login_attempts_info !== null && (
+                            response.login_attempts_info.failed_attempts_number >= response.login_attempts_info.max_attempts_number
+                        ) && response.errors.reason === 'captcha'
+                        try {
+                            if (render_captcha) {
+                                grecaptchaMasterLoginWidget = grecaptcha.render('g-master-recaptcha', {
+                                    'sitekey': '6LdRklYcAAAAAC1dL3cBLr-I2AB8VfkacnWkZjIA'
+                                });
+                            }
+                        } catch (e) {}
+                        $('#internal-error').hide();
+                        if (response.errors.reason !== undefined && response.errors.message !== null) {
+                            handleFormErrors(formID, {
+                                'personal_password': [response.errors.message]
+                            })
+                        } else {
+                            handleFormErrors(formID, response.errors)
+                        }
+                    }
+                }
+            })
+        })
+        $('#reset-password-form').submit(function(e) {
+            var formID = 'reset-password';
+
+            e.preventDefault();
+            $.ajax({
+                method: 'POST',
+                url: apiUrl + '/api/user/reset_password',
+                contentType: "application/json; charset=UTF-8",
+                dataType: 'json',
+                data: JSON.stringify({
+                    email: getFieldValue(formID, 'email'),
+                    url_to_change_pwd: window.location.href
+                }),
+                error: function(err) {
+                    console.error('Internal', err)
+                    return $('#internal-error').show();
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        $(".panel-login").fadeOut(100);
+                        $("#panel-reset").fadeIn(100);
+                    } else {
+                        console.error('Api error', response.errors)
+                        clearForm(formID)
+                        $('#internal-error').hide();
+                        handleFormErrors(formID, response.errors)
+                    }
+                }
+            })
+        })
+        $('#change-password-form').submit(function(e) {
+            var formID = 'change-password';
+            $("#change-password-errors").text("")
+            e.preventDefault();
+            $.ajax({
+                method: 'POST',
+                url: apiUrl + '/api/user/change_password',
+                contentType: "application/json; charset=UTF-8",
+                dataType: 'json',
+                data: JSON.stringify({
+                    password: getFieldValue(formID, 'password'),
+                    password_confirmation: getFieldValue(formID, 'repeatPassword'),
+                    hash: getFieldValue(formID, 'secret-key')
+                }),
+                error: function(err) {
+                    console.error('Internal', err)
+                    return $('#internal-error').show();
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        location.href = apiUrl + '?auth_key=' + response.auth_key
+                    } else {
+                        $("#change-password-errors").text(JSON.stringify(response.errors))
+                        console.error('Api error', response.errors)
+                        clearForm(formID)
+                        $('#internal-error').hide();
+                        handleFormErrors(formID, response.errors)
+                    }
+                }
+            });
+        });
+        $('#login-form-link').click(function(e) {
+            $("#login-form").delay(100).fadeIn(100);
+            $("#register-form").fadeOut(100);
+            $("#master-login-form").fadeOut(100);
+            $("#change-password-form").fadeOut(100);
+            $('#register-form-link').removeClass('active');
+            $('#master-login-form-link').removeClass('active');
+            $(this).addClass('active');
+            e.preventDefault();
+        });
+        $('#register-form-link').click(function(e) {
+            $("#register-form").delay(100).fadeIn(100);
+            $("#login-form").fadeOut(100);
+            $("#master-login-form").fadeOut(100);
+            $("#change-password-form").fadeOut(100);
+            $('#master-login-form-link').removeClass('active');
+            $('#login-form-link').removeClass('active');
+            $(this).addClass('active');
+            e.preventDefault();
+        });
+        $('#master-login-form-link').click(function(e) {
+            $("#master-login-form").delay(100).fadeIn(100);
+            $("#login-form").fadeOut(100);
+            $("#register-form").fadeOut(100);
+            $("#change-password-form").fadeOut(100);
+            $('#login-form-link').removeClass('active');
+            $('#register-form-link').removeClass('active');
+            $(this).addClass('active');
+            e.preventDefault();
+        });
+        $('.forgot-password').click(function(e) {
+            $("#reset-password-form").delay(100).fadeToggle(100);
+            e.preventDefault();
+        });
+    })
+</script>
+
+
+<script>
+    ! function(a, m, o, c, r, m) {
+        a[o + c] = a[o + c] || {
+            setMeta: function(p) {
+                this.params = (this.params || []).concat([p])
+            }
+        }, a[o + r] = a[o + r] || function(f) {
+            a[o + r].f = (a[o + r].f || []).concat([f])
+        }, a[o + r]({
+            id: "880072",
+            hash: "9bd514e906b9d41f87b1a618abed9e18",
+            locale: "ru"
+        }), a[o + m] = a[o + m] || function(f, k) {
+            a[o + m].f = (a[o + m].f || []).concat([
+                [f, k]
+            ])
+        }
+    }(window, 0, "amo_forms_", "params", "load", "loaded");
+</script>
+<script id="amoforms_script_880072" async="async" charset="utf-8" src="https://forms.amocrm.ru/forms/assets/js/amoforms.js?1644930030"></script>
